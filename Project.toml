@@ -1,0 +1,7 @@
+name = "NiceNumbers"
+uuid = "fd372b59-0929-42ec-9982-92b7b2350263"
+authors = ["Felix Kastner <kastner.felix@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
