@@ -1,8 +1,11 @@
 module NiceNumbers
 
-using Primes
-import Base: +, -, *, /, inv
+import Primes: factor, prodfactors
+import Base: +, -, *, /, inv, one, zero, isinteger
+import Base.promote_rule
+
 export NiceNumber
+export isrational
 
 struct NiceNumber <: Real
     a::Rational{Int}
