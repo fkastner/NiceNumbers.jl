@@ -26,6 +26,8 @@ using Test
     end
 
     @testset "Scalar Arithmetic" begin
+        @test +n == n
+        @test -n == NiceNumber(-2, -3, 5)
         @test 4 + n == n + 4 == NiceNumber(6, 3, 5)
         @test 4 - n == -(n - 4) == NiceNumber(2, -3, 5)
         @test 3 * n == n * 3 == NiceNumber(6, 9, 5)
@@ -34,10 +36,13 @@ using Test
 
     @testset "Conversion" begin
         @test float(NiceNumber(13, 3, 7)) == 13 + 3 * √7
+        @test NiceNumber(n) == n
     end
 
     @testset "Misc" begin
         @test isrational(NiceNumber(139 // 7, 0, 17))
         @test isinteger(NiceNumber(12))
+        @test one(n) == one(NiceNumber) == NiceNumber(1)
+        @test zero(n) == zero(NiceNumber) == NiceNumber(0)
     end
 end
