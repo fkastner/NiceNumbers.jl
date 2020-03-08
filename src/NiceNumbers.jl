@@ -1,7 +1,7 @@
 module NiceNumbers
 
 import Primes: factor, prodfactors
-import Base: +, -, *, /, inv, one, zero, isinteger
+import Base: +, -, *, inv, /, sqrt, <, one, zero, isinteger, isfinite
 import Base.promote_rule
 
 export NiceNumber
@@ -27,6 +27,8 @@ struct NiceNumber <: Real
         new(a, coeff, radicand)
     end
 end
+NiceNumber(a, coeff, radicand::Rational) =
+    NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
 NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
 NiceNumber(n::NiceNumber) = n
 
@@ -49,9 +51,12 @@ one(::NiceNumber) = NiceNumber(1, 0, 0)
 zero(::NiceNumber) = NiceNumber(0, 0, 0)
 
 AbstractFloat(n::NiceNumber) = float(n.a) + float(n.coeff) * √n.radicand
+(::Type{T})(n::NiceNumber) where {T<:AbstractFloat} =
+    convert(T, n.a) + convert(T, n.coeff) * convert(T, √n.radicand)
 
 isrational(n::NiceNumber) = n.coeff == 0
 isinteger(n::NiceNumber) = isrational(n) && isinteger(n.a)
+isfinite(n::NiceNumber) = isfinite(n.a) && isfinite(n.coeff)
 
 function Base.show(io::IO, n::NiceNumber)
     if isrational(n)
@@ -84,5 +89,9 @@ end
 
 inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff^2 * n.radicand)
 /(n::NiceNumber, m::NiceNumber) = n * inv(m)
+
+sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : error("That's not nice anymore!")
+
+<(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 
 end # module

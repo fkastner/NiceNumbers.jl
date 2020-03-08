@@ -1,4 +1,5 @@
 docs/build/
+test/Manifest.toml
 *~
 *.log
 *.jl.cov

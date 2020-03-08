@@ -9,16 +9,23 @@
 This package implements a number type to represent numbers you can safely give to
 your students to work with.
 
+The goal is that when common linear algebra or numerical algorithms work using `NiceNumber`s
+that then one can be sure that the algorithm can be reasonably easy worked through by hand
+with the given numbers.
+
+Nice numbers as implemented in this package consist of a rational part and a square root part with
+a rational coefficient. Thus every `NiceNumber` is specified using two `Rational{Int}`s and one `Int`.
+
 ## Installation
 
 Since this package isn't registered yet, you have to use the GitHub URL of the repository:
-```julia
+```jldoctest readme
 (v1.3) pkg> add https://github.com/fkastner/NiceNumbers.jl
 ```
 
 ## Usage Example
 
-```julia
+```jldoctest readme
 julia> using NiceNumbers
 
 julia> n = NiceNumber(1,2,3);
