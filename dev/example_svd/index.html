@@ -1,56 +1,64 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Example: SVD · NiceNumbers.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">NiceNumbers.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Example: SVD</a><ul class="internal"><li><a class="tocitem" href="#The-Math-1"><span>The Math</span></a></li><li><a class="tocitem" href="#Using-NiceNumbers-to-build-the-exercise-1"><span>Using NiceNumbers to build the exercise</span></a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Example: SVD</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Example: SVD</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/fkastner/NiceNumbers.jl/blob/master/docs/src/example_svd.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Example:-SVD-1"><a class="docs-heading-anchor" href="#Example:-SVD-1">Example: SVD</a><a class="docs-heading-anchor-permalink" href="#Example:-SVD-1" title="Permalink"></a></h1><p><em>Building an SVD exercise</em></p><p>In this example we want to see how we can use <code>NiceNumber</code>s to construct an exercise for a singular value decomposition.</p><h2 id="The-Math-1"><a class="docs-heading-anchor" href="#The-Math-1">The Math</a><a class="docs-heading-anchor-permalink" href="#The-Math-1" title="Permalink"></a></h2><p>For a given matrix <span>$A\in\mathbb{R}^{m\times n}$</span>, <span>$m\geq n$</span>, we try to find a decomposition of the form</p><div>\[A = U(\Sigma 0)^\top V^\top\]</div><p>where <code>U</code> and <code>V</code> are orthogonal (or unitary) square matrices.</p><h2 id="Using-NiceNumbers-to-build-the-exercise-1"><a class="docs-heading-anchor" href="#Using-NiceNumbers-to-build-the-exercise-1">Using NiceNumbers to build the exercise</a><a class="docs-heading-anchor-permalink" href="#Using-NiceNumbers-to-build-the-exercise-1" title="Permalink"></a></h2><p>Load the relevant packages:</p><pre><code class="language-julia-repl">julia&gt; using NiceNumbers, LinearAlgebra</code></pre><p>Decide on an orthogonal basis in <span>$\mathbb{R}^m$</span> (here <span>$m=3$</span>)</p><pre><code class="language-julia-repl">julia&gt; u1 = NiceNumber.([3,12,4])
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Example: SVD · NiceNumbers.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">NiceNumbers.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Example: SVD</a><ul class="internal"><li><a class="tocitem" href="#The-Math-1"><span>The Math</span></a></li><li><a class="tocitem" href="#Using-NiceNumbers-to-build-the-exercise-1"><span>Using NiceNumbers to build the exercise</span></a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Example: SVD</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Example: SVD</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/fkastner/NiceNumbers.jl/blob/master/docs/src/example_svd.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Example:-SVD-1"><a class="docs-heading-anchor" href="#Example:-SVD-1">Example: SVD</a><a class="docs-heading-anchor-permalink" href="#Example:-SVD-1" title="Permalink"></a></h1><p><em>Building an SVD exercise</em></p><p>In this example we want to see how we can use <code>NiceNumber</code>s to construct an exercise for a singular value decomposition.</p><h2 id="The-Math-1"><a class="docs-heading-anchor" href="#The-Math-1">The Math</a><a class="docs-heading-anchor-permalink" href="#The-Math-1" title="Permalink"></a></h2><p>For a given matrix <span>$A\in\mathbb{R}^{m\times n}$</span>, <span>$m\geq n$</span>, we try to find a decomposition of the form</p><div>\[A = U(\Sigma, 0)^\top V^\top\]</div><p>where <span>$U$</span> and <span>$V$</span> are orthogonal (or unitary) square matrices and <span>$\Sigma$</span> is a diagonal matrix with the singular values of <span>$A$</span> on the diagonal.</p><h2 id="Using-NiceNumbers-to-build-the-exercise-1"><a class="docs-heading-anchor" href="#Using-NiceNumbers-to-build-the-exercise-1">Using NiceNumbers to build the exercise</a><a class="docs-heading-anchor-permalink" href="#Using-NiceNumbers-to-build-the-exercise-1" title="Permalink"></a></h2><p>To construct a workable exercise we start from the decomposition and construct <span>$A$</span>. First we need to load the relevant packages:</p><pre><code class="language-julia-repl">julia&gt; using NiceNumbers, LinearAlgebra</code></pre><p>Decide on an orthogonal basis in <span>$\mathbb{R}^m$</span> (here <span>$m=3$</span>)</p><pre><code class="language-julia-repl">julia&gt; u1 = NiceNumber[3,12,4]
 3-element Array{NiceNumber,1}:
   3//1
  12//1
   4//1
-julia&gt; u2 = NiceNumber.([-4,0,3])
+
+julia&gt; u2 = NiceNumber[-4,0,3]
 3-element Array{NiceNumber,1}:
  -4//1
   0//1
   3//1
+
 julia&gt; u3 = cross(u1,u2)
 3-element Array{NiceNumber,1}:
   36//1
  -25//1
-  48//1</code></pre><p>and take note of their norms</p><pre><code class="language-julia-repl">julia&gt; n1 = Int(norm(u1))
-13
-julia&gt; n2 = Int(norm(u2))
-5
-julia&gt; n3 = Int(norm(u3))
-65
+  48//1</code></pre><p>and take note of their norms</p><pre><code class="language-julia-repl">julia&gt; n1 = norm(u1)
+Nice number:
+   13//1
+
+julia&gt; n2 = norm(u2)
+Nice number:
+   5//1
+
+julia&gt; n3 = norm(u3)
+Nice number:
+   65//1
+
 julia&gt; n3 == n1*n2
-true
-</code></pre><pre><code class="language-julia-repl">julia&gt; U = 1//n3 * [u1*n2 u2*n1 u3]
+true</code></pre><p>to construct <span>$U$</span>:</p><pre><code class="language-julia-repl">julia&gt; U = 1/n3 * [u1*n2 u2*n1 u3]
 3×3 Array{NiceNumber,2}:
   3//13  -4//5  36//65
  12//13   0//1  -5//13
-  4//13   3//5  48//65
-julia&gt; V = 1//5* NiceNumber.([-3 4;4 3])
+  4//13   3//5  48//65</code></pre><p>The same procedure can in principle be used to construct a second unitary matrix in <span>$\mathbb{R}^{n\times n}$</span> (here <span>$n=2$</span>):</p><pre><code class="language-julia-repl">julia&gt; V = 1//5* NiceNumber[-3 4;4 3]
 2×2 Array{NiceNumber,2}:
  -3//5  4//5
-  4//5  3//5
-
-julia&gt; Σ = diagm(NiceNumber.([13,5]))
+  4//5  3//5</code></pre><p>No we fix the singular values and construct some auxiliary matrices:</p><pre><code class="language-julia-repl">julia&gt; Σ = diagm(NiceNumber[13,5])
 2×2 Array{NiceNumber,2}:
  13//1  0//1
   0//1  5//1
+
 julia&gt; S = [Σ;0 0]
 3×2 Array{NiceNumber,2}:
  13//1  0//1
   0//1  5//1
   0//1  0//1
+
 julia&gt; R = pinv(S)
 2×3 Array{NiceNumber,2}:
  1//13  0//1  0//1
-  0//1  1//5  0//1
-
-julia&gt; A = U*S*V&#39;
+  0//1  1//5  0//1</code></pre><p>And we&#39;re ready to construct our matrix <span>$A$</span> and it&#39;s pseudoinverse <span>$A^\dagger$</span>:</p><pre><code class="language-none">julia&gt; A = U*S*V&#39;
 3×2 Array{NiceNumber,2}:
   -5//1   0//1
  -36//5  48//5
    0//1   5//1
+
 julia&gt; A⁺ = V*R*U&#39;
 2×3 Array{NiceNumber,2}:
  -2929//21125  -36//845  1728//21125
- -1728//21125   48//845  1921//21125</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 8 March 2020 11:30">Sunday 8 March 2020</span>. Using Julia version 1.3.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ -1728//21125   48//845  1921//21125
+
+julia&gt; A⁺ ≈ pinv(A)
+true</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 8 March 2020 20:53">Sunday 8 March 2020</span>. Using Julia version 1.3.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
