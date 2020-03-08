@@ -1,8 +1,11 @@
 module NiceNumbers
 
 import Primes: factor, prodfactors
-import Base: +, -, *, inv, /, sqrt, <, one, zero, isinteger, isfinite
-import Base.promote_rule
+import Base: +, -, *, inv, /, sqrt, //
+import Base: <, <=
+import Base: one, zero, isinteger, isfinite
+import Base: promote_rule
+import LinearAlgebra: norm, norm2
 
 export NiceNumber
 export isrational
@@ -30,6 +33,7 @@ end
 NiceNumber(a, coeff, radicand::Rational) =
     NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
 NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
+NiceNumber(x::AbstractFloat) = NiceNumber(Rational{Int}(x), 0, 0)
 NiceNumber(n::NiceNumber) = n
 
 function reduce_root(coeff, radicand)
@@ -93,5 +97,15 @@ inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff
 sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : error("That's not nice anymore!")
 
 <(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
+<=(n::NiceNumber, m::NiceNumber) = n === m || n < m
+
+//(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} =
+    n / m
+
+norm(n::NiceNumber) = n > 0 ? n : -n
+norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
+
+##
+#eps(::Type{NiceNumber}) = NiceNumber(0)
 
 end # module

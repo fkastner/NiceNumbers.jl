@@ -8,6 +8,8 @@ using Test, LinearAlgebra
         @test NiceNumber(2, 3, 4) === NiceNumber(8)
         @test NiceNumber(2, 3, 0) === NiceNumber(2)
         @test NiceNumber(2, 0, 5) === NiceNumber(2)
+        @test NiceNumber(3 // 5) === NiceNumber(3 // 5, 0, 0)
+        @test NiceNumber(3 // 5, 3 // 5, 27 // 125) === NiceNumber(3 // 5, 9 // 125, 15)
         @test NiceNumber(0, 1, 1 // 5) === NiceNumber(0, 1 // 5, 5)
     end
 
@@ -36,6 +38,12 @@ using Test, LinearAlgebra
         @test sqrt(NiceNumber(9)) === NiceNumber(3)
     end
 
+    @testset "Rational Arithmetic" begin
+        @test n // 3 === n / 3
+        @test 3 // n === 3 / n
+        @test n // n === n / n === NiceNumber(1)
+    end
+
     @testset "Comparisons" begin
         @test NiceNumber(7) < NiceNumber(42)
         @test NiceNumber(7) < NiceNumber(7, 1, 2)
@@ -50,8 +58,11 @@ using Test, LinearAlgebra
         @test Float64(NiceNumber(13, 3, 7)) == 13 + 3 * √7
     end
 
+    u = NiceNumber[4, 12, 3] * sqrt(NiceNumber(2))
     @testset "Linear Algebra" begin
-        @test true
+        @test norm(n) === n
+        @test norm(m) === -m
+        @test norm(u) === NiceNumber(0, 13, 2)
     end
 
     @testset "Misc" begin
