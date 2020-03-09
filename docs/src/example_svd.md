@@ -73,7 +73,7 @@ julia> V = 1//5* NiceNumber[-3 4;4 3]
   4//5  3//5
 ```
 
-No we fix the singular values and construct some auxiliary matrices:
+Now we fix the singular values and construct some auxiliary matrices:
 ```jldoctest SVD
 julia> Σ = diagm(NiceNumber[13,5])
 2×2 Array{NiceNumber,2}:

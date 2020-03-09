@@ -23,7 +23,7 @@ Since this package isn't registered yet, you have to use the GitHub URL of the r
 ```jldoctest index
 julia> using NiceNumbers
 
-julia> n = NiceNumber(2,3,5);
+julia> n = NiceNumber(2,3,5)
 Nice number:
    2//1 + 3//1 ⋅ √5
 
@@ -44,7 +44,6 @@ Nice number:
 
 julia> sqrt(n)
 ERROR: That's not nice anymore!
-Stacktrace:
 [...]
 ```
 
