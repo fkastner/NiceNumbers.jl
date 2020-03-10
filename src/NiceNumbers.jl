@@ -1,7 +1,8 @@
 module NiceNumbers
 
 import Primes: factor, prodfactors
-import Base: +, -, *, inv, /, sqrt, //
+import Base: +, -, *, inv, /, sqrt, ^
+import Base: //
 import Base: <, <=
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
@@ -33,13 +34,13 @@ end
 NiceNumber(a, coeff, radicand::Rational) =
     NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
 NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
-NiceNumber(x::AbstractFloat) = NiceNumber(Rational{Int}(x), 0, 0)
+NiceNumber(x::AbstractFloat) = NiceNumber(rationalize(Int,x), 0, 0)
 NiceNumber(n::NiceNumber) = n
 
 """
     reduce_root(coeff, radicand)
 
-Simplifies the expression ``coeff\\cdot\\sqrt radicand`` by factoring all remaining squares
+Simplifies the expression ``\\textrm{coeff}\\cdot\\sqrt{\\textrm{radicand}}`` by factoring all remaining squares
 in `radicand` into `coeff`.
 """
 function reduce_root(coeff::Union{Integer,Rational}, radicand::Integer)
@@ -106,6 +107,15 @@ inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff
 /(n::NiceNumber, m::NiceNumber) = n * inv(m)
 
 sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : error("That's not nice anymore!")
+function nthroot(m::NiceNumber,n)
+    !ispow2(n) && error("That's not nice anymore!")
+    for i = 1:div(n,2)
+        m = sqrt(m);
+    end
+    return m
+end
+^(x::Number,n::NiceNumber) = isrational(n) ? x^n.a : x^float(n)
+^(n::NiceNumber, r::Rational) = nthroot(n^numerator(r),denominator(r))
 
 <(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 <=(n::NiceNumber, m::NiceNumber) = n === m || n < m
@@ -118,42 +128,35 @@ norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
 
 ## macro stuff
 """
-    nice(x)
+    nice(x, mod = @__MODULE__)
 
 If `x` is an expression it replaces all occuring numbers by `NiceNumber`s.
+
 If `x` is a number it turns it into a `NiceNumber`.
+
+If `x` is a symbol defined in `mod` as a `Number` or `AbstractArray{<:Number}` then it converts it into a `NiceNumber` or `AbstractArray{NiceNumber}`. This means the macro should only be used on the rhs of assignments.
+
+Otherwise it does nothing.
 """
-function nice(x) end
-# nice(x) = x
-# nice(n::Number) = NiceNumber(n)
-# nice(ex::Expr) = Expr(ex.head, map(nice, ex.args))
-function nice(x)
-    if isa(x, Expr)
-        new_args = map(nice, x.args)
-        return Expr(x.head, new_args...)
-    elseif isa(x, Number)
-        return NiceNumber(x)
-    else
-        return x
-    end
+function nice end
+nice(x, mod=@__MODULE__) = x
+nice(n::Number, mod=@__MODULE__) = NiceNumber(n)
+nice(ex::Expr, mod=@__MODULE__) = Expr(ex.head, map(a->nice(a,mod), ex.args)...)
+function nice(s::Symbol, mod=@__MODULE__)
+    !isdefined(mod,s) && return s
+    type = typeof(mod.eval(s))
+    type <: Number && return Expr(:call,:NiceNumber,s)
+    type <: AbstractArray{<:Number} && return Expr(:.,NiceNumber,Expr(:tuple,s))
+    return s
 end
+
 """
     @nice
 
 Return equivalent expression with all numbers converted to `NiceNumber`s.
 """
 macro nice(code)
-    return nice(code)
+    return esc(nice(code, __module__))
 end
-
-# julia> @nice norm([4,12,3] * √2)
-# Nice number:
-#    0//1 + 13//1 ⋅ √2
-#
-# julia> norm([4,12,3] * √2)
-# 18.38477631085024
-
-##
-#eps(::Type{NiceNumber}) = NiceNumber(0)
 
 end # module

@@ -16,6 +16,7 @@ nice
 ```@docs
 isrational
 NiceNumbers.reduce_root
+NiceNumbers.nthroot
 ```
 
 ## Index
