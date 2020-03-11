@@ -134,21 +134,12 @@ If `x` is an expression it replaces all occuring numbers by `NiceNumber`s.
 
 If `x` is a number it turns it into a `NiceNumber`.
 
-If `x` is a symbol defined in `mod` as a `Number` or `AbstractArray{<:Number}` then it converts it into a `NiceNumber` or `AbstractArray{NiceNumber}`. This means the macro should only be used on the rhs of assignments.
-
 Otherwise it does nothing.
 """
 function nice end
-nice(x, mod=@__MODULE__) = x
-nice(n::Number, mod=@__MODULE__) = NiceNumber(n)
-nice(ex::Expr, mod=@__MODULE__) = Expr(ex.head, map(a->nice(a,mod), ex.args)...)
-function nice(s::Symbol, mod=@__MODULE__)
-    !isdefined(mod,s) && return s
-    type = typeof(mod.eval(s))
-    type <: Number && return Expr(:call,:NiceNumber,s)
-    type <: AbstractArray{<:Number} && return Expr(:.,NiceNumber,Expr(:tuple,s))
-    return s
-end
+nice(x) = x
+nice(n::Number) = NiceNumber(n)
+nice(ex::Expr) = Expr(ex.head, map(nice, ex.args)...)
 
 """
     @nice
@@ -156,7 +147,7 @@ end
 Return equivalent expression with all numbers converted to `NiceNumber`s.
 """
 macro nice(code)
-    return esc(nice(code, __module__))
+    return esc(nice(code))
 end
 
 end # module

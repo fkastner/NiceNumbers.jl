@@ -57,7 +57,7 @@ There is also a macro to simplify working with nice numbers:
 julia> n = norm([4,12,3] * √2)
 18.38477631085024
 
-julia> m = @nice norm([4,12,3] * √2)
+julia> @nice m = norm([4,12,3] * √2)
 Nice number:
    0//1 + 13//1 ⋅ √2
 
