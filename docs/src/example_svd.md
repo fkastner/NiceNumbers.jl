@@ -92,7 +92,7 @@ julia> R = pinv(S)
   0//1  1//5  0//1
 ```
 And we're ready to construct our matrix ``A`` and it's pseudoinverse ``A^\dagger``:
-```
+```jldoctest SVD
 julia> A = U*S*V'
 3×2 Array{NiceNumber,2}:
   -5//1   0//1
