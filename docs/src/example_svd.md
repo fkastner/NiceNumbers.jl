@@ -23,35 +23,35 @@ Decide on an orthogonal basis in ``\mathbb{R}^m`` (here ``m=3``)
 ```jldoctest SVD
 julia> u1 = NiceNumber[3,12,4]
 3-element Array{NiceNumber,1}:
-  3//1
- 12//1
-  4//1
+  3
+ 12
+  4
 
 julia> u2 = NiceNumber[-4,0,3]
 3-element Array{NiceNumber,1}:
- -4//1
-  0//1
-  3//1
+ -4
+  0
+  3
 
 julia> u3 = cross(u1,u2)
 3-element Array{NiceNumber,1}:
-  36//1
- -25//1
-  48//1
+  36
+ -25
+  48
 ```
 and take note of their norms
 ```jldoctest SVD
 julia> n1 = norm(u1)
 Nice number:
-   13//1
+   13
 
 julia> n2 = norm(u2)
 Nice number:
-   5//1
+   5
 
 julia> n3 = norm(u3)
 Nice number:
-   65//1
+   65
 
 julia> n3 == n1*n2
 true
@@ -61,7 +61,7 @@ to construct ``U``:
 julia> U = 1/n3 * [u1*n2 u2*n1 u3]
 3×3 Array{NiceNumber,2}:
   3//13  -4//5  36//65
- 12//13   0//1  -5//13
+ 12//13      0  -5//13
   4//13   3//5  48//65
 ```
 The same procedure can in principle be used to construct a second unitary matrix in
@@ -77,33 +77,33 @@ Now we fix the singular values and construct some auxiliary matrices:
 ```jldoctest SVD
 julia> Σ = diagm(NiceNumber[13,5])
 2×2 Array{NiceNumber,2}:
- 13//1  0//1
-  0//1  5//1
+ 13  0
+  0  5
 
 julia> S = [Σ;0 0]
 3×2 Array{NiceNumber,2}:
- 13//1  0//1
-  0//1  5//1
-  0//1  0//1
+ 13  0
+  0  5
+  0  0
 
 julia> R = pinv(S)
 2×3 Array{NiceNumber,2}:
- 1//13  0//1  0//1
-  0//1  1//5  0//1
+ 1//13     0  0
+     0  1//5  0
 ```
 And we're ready to construct our matrix ``A`` and it's pseudoinverse ``A^\dagger``:
 ```jldoctest SVD
 julia> A = U*S*V'
 3×2 Array{NiceNumber,2}:
-  -5//1   0//1
+     -5      0
  -36//5  48//5
-   0//1   5//1
+      0      5
 
 julia> A⁺ = V*R*U'
 2×3 Array{NiceNumber,2}:
  -2929//21125  -36//845  1728//21125
  -1728//21125   48//845  1921//21125
 
-julia> A⁺ ≈ pinv(A)
+julia> float(A⁺) ≈ pinv(float(A))
 true
 ```

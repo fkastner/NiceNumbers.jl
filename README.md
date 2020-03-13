@@ -30,22 +30,22 @@ julia> using NiceNumbers
 
 julia> n = NiceNumber(2,3,5);
 Nice number:
-   2//1 + 3//1 ⋅ √5
+   2 + 3 ⋅ √5
 
 julia> n^2
 Nice number:
-   49//1 + 12//1 ⋅ √5
+   49 + 12 ⋅ √5
 
 julia> m = NiceNumber(3//5)
 Nice number:
    3//5
 
 julia> n+m, n-m, n*m, n/m
-(13//5 + 3//1 ⋅ √5, 7//5 + 3//1 ⋅ √5, 6//5 + 9//5 ⋅ √5, 10//3 + 5//1 ⋅ √5)
+(13//5 + 3 ⋅ √5, 7//5 + 3 ⋅ √5, 6//5 + 9//5 ⋅ √5, 10//3 + 5 ⋅ √5)
 
 julia> sqrt(m)
 Nice number:
-   0//1 + 1//5 ⋅ √15
+   1//5 ⋅ √15
 
 julia> sqrt(n)
 ERROR: That's not nice anymore!
@@ -54,12 +54,14 @@ ERROR: That's not nice anymore!
 
 There is also a macro to simplify working with nice numbers:
 ```julia
+julia> using LinearAlgebra
+
 julia> n = norm([4,12,3] * √2)
 18.38477631085024
 
 julia> @nice m = norm([4,12,3] * √2)
 Nice number:
-   0//1 + 13//1 ⋅ √2
+   13 ⋅ √2
 
 julia> n == m
 true

@@ -116,6 +116,12 @@ inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff
 /(n::NiceNumber, m::NiceNumber) = n * inv(m)
 
 sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : error("That's not nice anymore!")
+"""
+    nthroot(m::NiceNumber, n)
+
+Returns the nth root of `m`. Works by repeatedly determining the square root and thus only for
+powers of two.
+"""
 function nthroot(m::NiceNumber, n)
     !ispow2(n) && error("That's not nice anymore!")
     while n > 1
@@ -130,6 +136,7 @@ end
 <(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 <=(n::NiceNumber, m::NiceNumber) = n === m || n < m
 ==(n::NiceNumber, m::AbstractFloat) = float(n) == m
+==(m::AbstractFloat, n::NiceNumber) = n == m
 
 //(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} =
     n / m
