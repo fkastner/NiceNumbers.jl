@@ -16,6 +16,8 @@ branches:
 notifications:
     email: false
 
+coveralls: true
+
 jobs:
     include:
         - stage: "Documentation"
@@ -25,6 +27,3 @@ jobs:
               - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
               - julia --project=docs/ docs/make.jl
           after_success: skip
-
-after_success:
-    - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
