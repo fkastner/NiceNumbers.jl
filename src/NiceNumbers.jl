@@ -3,7 +3,7 @@ module NiceNumbers
 import Primes: factor, prodfactors
 import Base: +, -, *, inv, /, sqrt, ^
 import Base: //
-import Base: <, <=
+import Base: <, <=, ==
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
 import LinearAlgebra: norm, norm2
@@ -34,7 +34,7 @@ end
 NiceNumber(a, coeff, radicand::Rational) =
     NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
 NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
-NiceNumber(x::AbstractFloat) = NiceNumber(rationalize(Int,x), 0, 0)
+NiceNumber(x::AbstractFloat) = NiceNumber(rationalize(Int, x), 0, 0)
 NiceNumber(n::NiceNumber) = n
 
 """
@@ -56,8 +56,7 @@ function reduce_root(coeff::Union{Integer,Rational}, radicand::Integer)
 end
 
 promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Union{Integer,Rational}} = NiceNumber
-promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:AbstractFloat} =
-    promote_type(Rational{Int}, T)
+promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:AbstractFloat} = NiceNumber # promote_type(Rational{Int}, T)
 one(::NiceNumber) = NiceNumber(1, 0, 0)
 zero(::NiceNumber) = NiceNumber(0, 0, 0)
 
@@ -70,15 +69,25 @@ AbstractFloat(n::NiceNumber) = float(n.a) + float(n.coeff) * √n.radicand
 
 Whether `n` is purely rational, i.e. has no square root portion.
 """
-isrational(n::NiceNumber) = n.coeff == 0
+isrational(n::NiceNumber) = iszero(n.coeff)
 isinteger(n::NiceNumber) = isrational(n) && isinteger(n.a)
 isfinite(n::NiceNumber) = isfinite(n.a) && isfinite(n.coeff)
 
 function Base.show(io::IO, n::NiceNumber)
+    pretty(r::Rational) = isinteger(r) ? numerator(r) : r
+
     if isrational(n)
-        print(io, n.a)
+        print(io, pretty(n.a))
     else
-        print(io, n.a, " + ", n.coeff, " ⋅ √", n.radicand)
+        print(
+            io,
+            iszero(n.a) ? "" : pretty(n.a),
+            iszero(n.a) ? "" : " + ",
+            isone(n.coeff) ? "" : pretty(n.coeff),
+            isone(n.coeff) ? "" : " ⋅ ",
+            "√",
+            n.radicand,
+        )
     end
 end
 Base.show(io::IO, ::MIME"text/plain", n::NiceNumber) = print(io, "Nice number:\n   ", n)
@@ -107,18 +116,20 @@ inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff
 /(n::NiceNumber, m::NiceNumber) = n * inv(m)
 
 sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : error("That's not nice anymore!")
-function nthroot(m::NiceNumber,n)
+function nthroot(m::NiceNumber, n)
     !ispow2(n) && error("That's not nice anymore!")
-    for i = 1:div(n,2)
-        m = sqrt(m);
+    while n > 1
+        m = sqrt(m)
+        n = n >> 1
     end
     return m
 end
-^(x::Number,n::NiceNumber) = isrational(n) ? x^n.a : x^float(n)
-^(n::NiceNumber, r::Rational) = nthroot(n^numerator(r),denominator(r))
+^(x::Number, n::NiceNumber) = isrational(n) ? NiceNumber(x)^n.a : x^float(n)
+^(n::NiceNumber, r::Rational) = nthroot(n^numerator(r), denominator(r))
 
 <(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 <=(n::NiceNumber, m::NiceNumber) = n === m || n < m
+==(n::NiceNumber, m::AbstractFloat) = float(n) == m
 
 //(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} =
     n / m
