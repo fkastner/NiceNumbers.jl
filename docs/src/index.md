@@ -13,9 +13,9 @@ a rational coefficient. Thus every `NiceNumber` is specified using two `Rational
 
 ## Installation
 
-Since this package isn't registered yet, you have to use the GitHub URL of the repository:
+Just add the package from the Julia Pkg mode:
 ```julia
-(v1.3) pkg> add https://github.com/fkastner/NiceNumbers.jl
+(@v1.4) pkg> add NiceNumbers
 ```
 
 ## Usage Example
