@@ -3,8 +3,7 @@
 
 [![Build Status](https://travis-ci.org/fkastner/NiceNumbers.jl.svg?branch=master)](https://travis-ci.org/fkastner/NiceNumbers.jl)
 [![Coverage Status](https://coveralls.io/repos/github/fkastner/NiceNumbers.jl/badge.svg?branch=master)](https://coveralls.io/github/fkastner/NiceNumbers.jl?branch=master)
-[![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://fkastner.github.io/NiceNumbers.jl/dev)
-
+[![Docs stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://fkastner.github.io/NiceNumbers.jl/stable)
 
 This package implements a number type to represent numbers you can safely give to
 your students to work with.
