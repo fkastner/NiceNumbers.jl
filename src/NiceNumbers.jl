@@ -3,7 +3,7 @@ module NiceNumbers
 import Primes: factor, prodfactors
 import Base: +, -, *, inv, /, sqrt, ^
 import Base: //
-import Base: <, <=, ==
+import Base: <, <=, ==, hash
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
 import LinearAlgebra: norm, norm2
@@ -108,8 +108,8 @@ end
 
 function *(n::NiceNumber, m::NiceNumber)
     return NiceNumber(m.a * n.a, m.a * n.coeff, n.radicand) +
-    NiceNumber(0, m.coeff * n.a, m.radicand) +
-    NiceNumber(0, n.coeff * m.coeff, n.radicand * m.radicand)
+           NiceNumber(0, m.coeff * n.a, m.radicand) +
+           NiceNumber(0, n.coeff * m.coeff, n.radicand * m.radicand)
 end
 
 inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff^2 * n.radicand)
@@ -137,6 +137,7 @@ end
 <=(n::NiceNumber, m::NiceNumber) = n === m || n < m
 ==(n::NiceNumber, m::AbstractFloat) = float(n) == m
 ==(m::AbstractFloat, n::NiceNumber) = n == m
+hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:NiceNumber, h))))
 
 //(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} =
     n / m
