@@ -1,9 +1,14 @@
 # NiceNumbers.jl
 *The nicest numbers in Julia*
 
-[![Build Status](https://travis-ci.org/fkastner/NiceNumbers.jl.svg?branch=master)](https://travis-ci.org/fkastner/NiceNumbers.jl)
+<!-- [![Build Status](https://travis-ci.org/fkastner/NiceNumbers.jl.svg?branch=master)](https://travis-ci.org/fkastner/NiceNumbers.jl)
 [![Coverage Status](https://coveralls.io/repos/github/fkastner/NiceNumbers.jl/badge.svg?branch=master)](https://coveralls.io/github/fkastner/NiceNumbers.jl?branch=master)
-[![Docs stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://fkastner.github.io/NiceNumbers.jl/stable)
+[![Docs stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://fkastner.github.io/NiceNumbers.jl/stable) -->
+
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://fkastner.github.io/NiceNumbers.jl/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://fkastner.github.io/NiceNumbers.jl/dev)
+[![Build Status](https://github.com/fkastner/NiceNumbers.jl/workflows/CI/badge.svg)](https://github.com/fkastner/NiceNumbers.jl/actions)
+[![Coverage](https://coveralls.io/repos/github/fkastner/NiceNumbers.jl/badge.svg?branch=master)](https://coveralls.io/github/fkastner/NiceNumbers.jl?branch=master)
 
 This package implements a number type to represent numbers you can safely give to
 your students to work with.
