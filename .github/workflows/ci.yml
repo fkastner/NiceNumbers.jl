@@ -1,7 +1,10 @@
 name: CI
 on:
-  - push
-  - pull_request
+  push:
+    branches: [master]
+    tags: [v*]
+  pull_request:
+
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -19,7 +22,8 @@ jobs:
           - x64
     steps:
       - uses: actions/checkout@v2
-      - uses: julia-actions/setup-julia@v1
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
@@ -33,7 +37,6 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
       - name: Coveralls
@@ -42,25 +45,3 @@ jobs:
           path-to-lcov: lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ matrix.version == '1' && matrix.os =='ubuntu-latest' }}
-  docs:
-    name: Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: julia-actions/setup-julia@v1
-        with:
-          version: '1.5'
-      - run: |
-          julia --project=docs -e '
-            using Pkg
-            Pkg.develop(PackageSpec(path=pwd()))
-            Pkg.instantiate()'
-      - run: |
-          julia --project=docs -e '
-            using Documenter: doctest
-            using NiceNumbers
-            doctest(NiceNumbers)'
-      - run: julia --project=docs docs/make.jl
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
