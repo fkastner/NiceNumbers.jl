@@ -10,7 +10,8 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout repository
+        uses: actions/checkout@v2
       - name: Set up Julia
         uses: julia-actions/setup-julia@latest
         with:
