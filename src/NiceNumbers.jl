@@ -7,6 +7,7 @@ import Base: <, <=, ==, hash
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
 import LinearAlgebra: norm, norm2
+import Base: conj
 
 export NiceNumber, nice, @nice
 export isrational
@@ -35,6 +36,7 @@ NiceNumber(a, coeff, radicand::Rational) =
     NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
 NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
 NiceNumber(x::AbstractFloat) = NiceNumber(rationalize(Int, x), 0, 0)
+NiceNumber(z::Complex{T}) where T<:Real = NiceNumber(z.re) + NiceNumber(0,z.im,-1)
 NiceNumber(n::NiceNumber) = n
 
 """
@@ -82,8 +84,8 @@ function Base.show(io::IO, n::NiceNumber)
         print(
             io,
             iszero(n.a) ? "" : pretty(n.a),
-            iszero(n.a) ? "" : " + ",
-            isone(n.coeff) ? "" : pretty(n.coeff),
+            iszero(n.a) ? "" : n.coeff>0 ? " + " : " - ",
+            isone(n.coeff) ? "" : pretty(abs(n.coeff)),
             isone(n.coeff) ? "" : " ⋅ ",
             "√",
             n.radicand,
@@ -107,9 +109,16 @@ end
 -(n::NiceNumber, m::NiceNumber) = n + (-m)
 
 function *(n::NiceNumber, m::NiceNumber)
-    return NiceNumber(m.a * n.a, m.a * n.coeff, n.radicand) +
-           NiceNumber(0, m.coeff * n.a, m.radicand) +
-           NiceNumber(0, n.coeff * m.coeff, n.radicand * m.radicand)
+    # if both have a complex part we need a minus in the last term
+    if n.radicand < 0 && m.radicand < 0
+        return NiceNumber(m.a * n.a, m.a * n.coeff, n.radicand) +
+               NiceNumber(0, m.coeff * n.a, m.radicand) +
+               NiceNumber(0, -n.coeff * m.coeff, n.radicand * m.radicand)
+    else
+        return NiceNumber(m.a * n.a, m.a * n.coeff, n.radicand) +
+               NiceNumber(0, m.coeff * n.a, m.radicand) +
+               NiceNumber(0, n.coeff * m.coeff, n.radicand * m.radicand)
+    end
 end
 
 inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff^2 * n.radicand)
@@ -144,6 +153,7 @@ hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:Ni
 
 norm(n::NiceNumber) = n > 0 ? n : -n
 norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
+conj(n::NiceNumber) = n.radicand >= 0 ? n : NiceNumber(n.a, -n.coeff, n.radicand)
 
 ## macro stuff
 """

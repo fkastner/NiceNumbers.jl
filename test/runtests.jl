@@ -17,6 +17,7 @@ using Test, LinearAlgebra
     n = NiceNumber(2, 3, 5)
     m = NiceNumber(5, -3, 5)
     k = NiceNumber(8, 4, 3)
+    c = NiceNumber(0, 1, -5)
 
     @testset "Basic Arithmetic" begin
         @test n + m === NiceNumber(7)
@@ -27,6 +28,7 @@ using Test, LinearAlgebra
         @test_broken n * k
         @test n / m === NiceNumber(-11 // 4, -21 // 20, 5)
         @test_broken n / k
+        @test c * c === NiceNumber(-5)
     end
 
     @testset "Scalar Arithmetic" begin
@@ -42,7 +44,6 @@ using Test, LinearAlgebra
         @test NiceNumbers.nthroot(NiceNumber(81), 8) === NiceNumber(0, 1, 3)
         @test NiceNumber(4)^(3 // 2) === NiceNumber(8)
         @test 4^NiceNumber(3 // 2) === NiceNumber(8)
-
     end
 
     @testset "Rational Arithmetic" begin
