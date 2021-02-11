@@ -12,7 +12,7 @@ import LinearAlgebra: norm, norm2
 export NiceNumber, nice, @nice
 export isrational
 
-struct NiceNumber <: Real
+struct NiceNumber <: Number
     a::Rational{Int}
     coeff::Rational{Int}
     radicand::Int
