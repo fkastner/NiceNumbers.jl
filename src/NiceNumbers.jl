@@ -6,8 +6,8 @@ import Base: //
 import Base: <, <=, ==, hash
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
+import Base: isreal, real, imag, conj, abs
 import LinearAlgebra: norm, norm2
-import Base: conj
 
 export NiceNumber, nice, @nice
 export isrational
@@ -74,6 +74,9 @@ Whether `n` is purely rational, i.e. has no square root portion.
 isrational(n::NiceNumber) = iszero(n.coeff)
 isinteger(n::NiceNumber) = isrational(n) && isinteger(n.a)
 isfinite(n::NiceNumber) = isfinite(n.a) && isfinite(n.coeff)
+isreal(n::NiceNumber) = n.radicand >= 0
+real(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a)
+imag(n::NiceNumber) = isreal(n) ? zero(n) : NiceNumber(0,n.coeff,-n.radicand)
 
 function Base.show(io::IO, n::NiceNumber)
     pretty(r::Rational) = isinteger(r) ? numerator(r) : r
@@ -151,9 +154,10 @@ hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:Ni
 //(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} =
     n / m
 
-norm(n::NiceNumber) = n > 0 ? n : -n
+conj(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a, -n.coeff, n.radicand)
+abs(n::NiceNumber) = isreal(n) ? n>0 ? n : -n : sqrt(n*conj(n))
+norm(n::NiceNumber) = abs(n)
 norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
-conj(n::NiceNumber) = n.radicand >= 0 ? n : NiceNumber(n.a, -n.coeff, n.radicand)
 
 ## macro stuff
 """

@@ -18,6 +18,7 @@ using Test, LinearAlgebra
     m = NiceNumber(5, -3, 5)
     k = NiceNumber(8, 4, 3)
     c = NiceNumber(0, 1, -5)
+    z = NiceNumber(2, -3, -5)
 
     @testset "Basic Arithmetic" begin
         @test n + m === NiceNumber(7)
@@ -72,6 +73,14 @@ using Test, LinearAlgebra
     @testset "Promotion" begin
         @test n + 18 // 5 === NiceNumber(28 // 5, 3, 5)
         @test n + 3.6 === NiceNumber(28 // 5, 3, 5)
+    end
+
+    @testset "Complex stuff" begin
+        @test abs(n) === n
+        @test abs(m) === -m
+        @test abs(c) === NiceNumber(0,1,5)
+        @test conj(z) === NiceNumber(2,3,-5)
+        @test abs(z) === NiceNumber(7)
     end
 
     u = NiceNumber[4, 12, 3] * sqrt(NiceNumber(2))
