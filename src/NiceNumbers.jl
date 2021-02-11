@@ -3,7 +3,7 @@ module NiceNumbers
 import Primes: factor, prodfactors
 import Base: +, -, *, inv, /, sqrt, ^
 import Base: //
-import Base: <, <=, ==, hash
+import Base: isless, <, <=, ==, hash
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
 import Base: isreal, real, imag, conj, abs
@@ -145,6 +145,10 @@ end
 ^(x::Number, n::NiceNumber) = isrational(n) ? NiceNumber(x)^n.a : x^float(n)
 ^(n::NiceNumber, r::Rational) = nthroot(n^numerator(r), denominator(r))
 
+# TODO: think about comparisons more (or less)
+isless(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
+isless(n::Real, m::NiceNumber) = n < float(m)
+isless(n::NiceNumber, m::Real) = isless(m,n)
 <(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 <=(n::NiceNumber, m::NiceNumber) = n === m || n < m
 ==(n::NiceNumber, m::AbstractFloat) = float(n) == m
@@ -155,7 +159,7 @@ hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:Ni
     n / m
 
 conj(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a, -n.coeff, n.radicand)
-abs(n::NiceNumber) = isreal(n) ? n>0 ? n : -n : sqrt(n*conj(n))
+abs(n::NiceNumber) = isreal(n) ? float(n)>0 ? n : -n : sqrt(n*conj(n))
 norm(n::NiceNumber) = abs(n)
 norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
 
