@@ -84,9 +84,9 @@ function Base.show(io::IO, n::NiceNumber)
         print(
             io,
             iszero(n.a) ? "" : pretty(n.a),
-            iszero(n.a) ? "" : n.coeff>0 ? " + " : " - ",
-            isone(n.coeff) ? "" : pretty(abs(n.coeff)),
-            isone(n.coeff) ? "" : " ⋅ ",
+            n.coeff>0 ? iszero(n.a) ? "" : "+" : "-",
+            isone(abs(n.coeff)) ? "" : pretty(abs(n.coeff)),
+            isone(abs(n.coeff)) ? "" : "⋅",
             "√",
             n.radicand,
         )

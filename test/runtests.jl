@@ -97,18 +97,21 @@ using Test, LinearAlgebra
 
     @testset "Show Methods" begin
         io = IOBuffer()
-        @test sprint(io -> show(io, n)) == "2 + 3 ⋅ √5"
+        @test sprint(io -> show(io, n)) == "2+3⋅√5"
         @test sprint(io -> show(io, NiceNumber(0))) == "0"
         @test sprint(io -> show(io, NiceNumber(7))) == "7"
         @test sprint(io -> show(io, NiceNumber(7 // 2))) == "7//2"
-        @test sprint(io -> show(io, NiceNumber(7, 1, 5))) == "7 + √5"
-        @test sprint(io -> show(io, NiceNumber(7, 5, 5))) == "7 + 5 ⋅ √5"
-        @test sprint(io -> show(io, NiceNumber(7, 1 // 2, 5))) == "7 + 1//2 ⋅ √5"
-        @test sprint(io -> show(io, NiceNumber(7 // 2, 1, 5))) == "7//2 + √5"
-        @test sprint(io -> show(io, NiceNumber(7 // 2, 5, 5))) == "7//2 + 5 ⋅ √5"
-        @test sprint(io -> show(io, NiceNumber(7 // 2, 1 // 2, 5))) == "7//2 + 1//2 ⋅ √5"
+        @test sprint(io -> show(io, NiceNumber(7, 1, 5))) == "7+√5"
+        @test sprint(io -> show(io, NiceNumber(7, -1, 5))) == "7-√5"
+        @test sprint(io -> show(io, NiceNumber(7, 5, 5))) == "7+5⋅√5"
+        @test sprint(io -> show(io, NiceNumber(7, -5, 5))) == "7-5⋅√5"
+        @test sprint(io -> show(io, NiceNumber(7, 1 // 2, 5))) == "7+1//2⋅√5"
+        @test sprint(io -> show(io, NiceNumber(7 // 2, 1, 5))) == "7//2+√5"
+        @test sprint(io -> show(io, NiceNumber(7 // 2, 5, 5))) == "7//2+5⋅√5"
+        @test sprint(io -> show(io, NiceNumber(7 // 2, 1 // 2, 5))) == "7//2+1//2⋅√5"
         @test sprint(io -> show(io, NiceNumber(0, 1, 5))) == "√5"
-        @test sprint(io -> show(io, NiceNumber(0, 5, 5))) == "5 ⋅ √5"
-        @test sprint(io -> show(io, NiceNumber(0, 1 // 2, 5))) == "1//2 ⋅ √5"
+        @test sprint(io -> show(io, NiceNumber(0, 5, 5))) == "5⋅√5"
+        @test sprint(io -> show(io, NiceNumber(0, -5, 5))) == "-5⋅√5"
+        @test sprint(io -> show(io, NiceNumber(0, 1 // 2, 5))) == "1//2⋅√5"
     end
 end
