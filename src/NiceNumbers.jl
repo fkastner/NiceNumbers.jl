@@ -148,7 +148,7 @@ end
 # TODO: think about comparisons more (or less)
 isless(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 isless(n::Real, m::NiceNumber) = n < float(m)
-isless(n::NiceNumber, m::Real) = isless(m,n)
+isless(n::NiceNumber, m::Real) = !isless(m,n)
 <(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 <=(n::NiceNumber, m::NiceNumber) = n === m || n < m
 ==(n::NiceNumber, m::AbstractFloat) = float(n) == m
