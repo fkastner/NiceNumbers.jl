@@ -165,17 +165,20 @@ norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
 
 ## macro stuff
 """
-    nice(x, mod = @__MODULE__)
+    nice(x)
 
 If `x` is an expression it replaces all occuring numbers by `NiceNumber`s.
 
 If `x` is a number it turns it into a `NiceNumber`.
+
+If `x` is the symbol `:im` it turns it into `NiceNumber(im)`.
 
 Otherwise it does nothing.
 """
 function nice end
 nice(x) = x
 nice(n::Number) = NiceNumber(n)
+nice(s::Symbol) = s===:im ? NiceNumber(im) : s
 nice(ex::Expr) = Expr(ex.head, map(nice, ex.args)...)
 
 """
