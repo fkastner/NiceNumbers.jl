@@ -124,4 +124,11 @@ using Test, LinearAlgebra
         @test sprint(io -> show(io, NiceNumber(0, -5, 5))) == "-5⋅√5"
         @test sprint(io -> show(io, NiceNumber(0, 1 // 2, 5))) == "1//2⋅√5"
     end
+    
+    @testset "NiceLinearAlgebra" begin
+        @testset "Cholesky" begin
+            @nice L = [2 0 0 0;0 1 0 0;4 6*sqrt(-1) 9 0;0 4 0 2]
+            @test L == cholesky(L*L').L
+        end
+    end
 end

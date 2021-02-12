@@ -191,4 +191,6 @@ macro nice(code)
     return esc(nice(code))
 end
 
+include("NiceLinAlg.jl")
+
 end # module
