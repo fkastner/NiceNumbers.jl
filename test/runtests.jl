@@ -102,6 +102,7 @@ using Test, LinearAlgebra
 
     @testset "Macro" begin
         @test @nice 4^1.5 === NiceNumber(8)
+        @test @nice sqrt(9//4)+7*sqrt(3)*im === NiceNumber(3//2,7,-3)
     end
 
     @testset "Show Methods" begin
