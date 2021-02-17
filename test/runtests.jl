@@ -130,5 +130,19 @@ using Test, LinearAlgebra
             @nice L = [2 0 0 0;0 1 0 0;4 6*sqrt(-1) 9 0;0 4 0 2]
             @test L == cholesky(L*L').L
         end
+
+        @testset "LU" begin
+            @nice L = [1 0 0;im 1 0; 1/2 -3im 1]
+            @nice U = [1 1 1;0 1 1; 0 0 1]
+            lu_decomp = lu(L*U)
+            @test lu_decomp.L == L
+            @test lu_decomp.U == U
+
+            @nice A = [2 2 0;2 2 1; 2 3 5]
+            # @test_throws SingularException lu_decomp = lu(A, Val(true))
+            lu_decomp = lu(A, Val(true))
+            @test lu_decomp.L == @nice [1 0 0;1 1 0;1 0 1]
+            @test lu_decomp.U == @nice [2 2 0;0 1 5;0 0 1]
+        end
     end
 end
