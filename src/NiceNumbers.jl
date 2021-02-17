@@ -6,8 +6,9 @@ import Base: //
 import Base: isless, <, <=, ==, hash
 import Base: one, zero, isinteger, isfinite
 import Base: promote_rule
-import Base: isreal, real, imag, conj, abs
+import Base: isreal, real, imag, conj, abs, abs2
 import LinearAlgebra: norm, norm2
+import Base: copysign
 
 export NiceNumber, nice, @nice
 export isrational
@@ -161,8 +162,10 @@ hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:Ni
 
 conj(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a, -n.coeff, n.radicand)
 abs(n::NiceNumber) = isreal(n) ? float(n)>0 ? n : -n : sqrt(n*conj(n))
+abs2(n::NiceNumber) = n*conj(n)
 norm(n::NiceNumber) = abs(n)
 norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
+copysign(n::NiceNumber, m::NiceNumber) = sign(n) == sign(m) ? n : -n
 
 ## macro stuff
 """
@@ -190,5 +193,7 @@ Return equivalent expression with all numbers converted to `NiceNumber`s.
 macro nice(code)
     return esc(nice(code))
 end
+
+include("NiceLinAlg.jl")
 
 end # module
