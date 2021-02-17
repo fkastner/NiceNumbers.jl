@@ -20,6 +20,7 @@ jobs:
         arch:
           - x64
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.version == 'nightly' }}
     steps:
       - name: Git checkout repository
         uses: actions/checkout@v2
