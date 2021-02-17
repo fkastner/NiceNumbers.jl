@@ -16,7 +16,7 @@ struct NiceNumber <: Number
     a::Rational{Int}
     coeff::Rational{Int}
     radicand::Int
-    function NiceNumber(a, coeff, radicand)
+    function NiceNumber(a::S, coeff::T, radicand::Int) where {S<:Union{Integer,Rational}, T<:Union{Integer,Rational}}
         if radicand == 0
             coeff = zero(coeff)
         elseif coeff == 0
@@ -32,9 +32,10 @@ struct NiceNumber <: Number
         new(a, coeff, radicand)
     end
 end
+NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
 NiceNumber(a, coeff, radicand::Rational) =
     NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
-NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
+NiceNumber(a, coeff, radicand) = NiceNumber(a)+NiceNumber(coeff)*sqrt(NiceNumber(radicand))
 NiceNumber(x::AbstractFloat) = NiceNumber(rationalize(Int, x), 0, 0)
 NiceNumber(z::Complex{T}) where T<:Real = NiceNumber(z.re) + NiceNumber(0,z.im,-1)
 NiceNumber(n::NiceNumber) = n
@@ -165,17 +166,20 @@ norm2(v::AbstractArray{NiceNumber,1}) = sqrt(v'v)
 
 ## macro stuff
 """
-    nice(x, mod = @__MODULE__)
+    nice(x)
 
 If `x` is an expression it replaces all occuring numbers by `NiceNumber`s.
 
 If `x` is a number it turns it into a `NiceNumber`.
+
+If `x` is the symbol `:im` it turns it into `NiceNumber(im)`.
 
 Otherwise it does nothing.
 """
 function nice end
 nice(x) = x
 nice(n::Number) = NiceNumber(n)
+nice(s::Symbol) = s===:im ? NiceNumber(im) : s
 nice(ex::Expr) = Expr(ex.head, map(nice, ex.args)...)
 
 """
