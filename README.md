@@ -24,7 +24,7 @@ a rational coefficient. Thus every `NiceNumber` is specified using two `Rational
 
 Just add the package from the Julia Pkg mode:
 ```julia
-(@v1.4) pkg> add NiceNumbers
+julia>] add NiceNumbers
 ```
 
 ## Usage Example
