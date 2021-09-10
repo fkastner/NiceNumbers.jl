@@ -73,6 +73,8 @@ using Test, LinearAlgebra
     @testset "Promotion" begin
         @test n + 18 // 5 === NiceNumber(28 // 5, 3, 5)
         @test n + 3.6 === NiceNumber(28 // 5, 3, 5)
+        @test NiceNumber(3,3,-1) + 7im === NiceNumber(3,10,-1) # issue #5
+        @test NiceNumber(3,3,-1) * 7im === NiceNumber(-21,21,-1) # issue #5
     end
 
     @testset "Complex stuff" begin

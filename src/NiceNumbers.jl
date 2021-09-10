@@ -59,8 +59,8 @@ function reduce_root(coeff::Union{Integer,Rational}, radicand::Integer)
     return coeff, radicand
 end
 
-promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Union{Integer,Rational}} = NiceNumber
-promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:AbstractFloat} = NiceNumber # promote_type(Rational{Int}, T)
+# always promote to NiceNumber; if that can't be done, it can't be nice
+promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Number} = NiceNumber
 one(::NiceNumber) = NiceNumber(1, 0, 0)
 zero(::NiceNumber) = NiceNumber(0, 0, 0)
 
