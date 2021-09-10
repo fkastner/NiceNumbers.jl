@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Example: SVD · NiceNumbers.jl</title><link rel="canonical" href="https://fkastner.github.io/NiceNumbers.jl/example_svd/"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">NiceNumbers.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../functions/">Index</a></li><li class="is-active"><a class="tocitem" href>Example: SVD</a><ul class="internal"><li><a class="tocitem" href="#The-Math"><span>The Math</span></a></li><li><a class="tocitem" href="#Using-NiceNumbers-to-build-the-exercise"><span>Using NiceNumbers to build the exercise</span></a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Example: SVD</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Example: SVD</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/fkastner/NiceNumbers.jl/blob/master/docs/src/example_svd.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Example:-SVD"><a class="docs-heading-anchor" href="#Example:-SVD">Example: SVD</a><a id="Example:-SVD-1"></a><a class="docs-heading-anchor-permalink" href="#Example:-SVD" title="Permalink"></a></h1><p><em>Building an SVD exercise</em></p><p>In this example we want to see how we can use <code>NiceNumber</code>s to construct an exercise for a singular value decomposition.</p><h2 id="The-Math"><a class="docs-heading-anchor" href="#The-Math">The Math</a><a id="The-Math-1"></a><a class="docs-heading-anchor-permalink" href="#The-Math" title="Permalink"></a></h2><p>For a given matrix <span>$A\in\mathbb{R}^{m\times n}$</span>, <span>$m\geq n$</span>, we try to find a decomposition of the form</p><p class="math-container">\[A = U(\Sigma, 0)^\top V^\top\]</p><p>where <span>$U$</span> and <span>$V$</span> are orthogonal (or unitary) square matrices and <span>$\Sigma$</span> is a diagonal matrix with the singular values of <span>$A$</span> on the diagonal.</p><h2 id="Using-NiceNumbers-to-build-the-exercise"><a class="docs-heading-anchor" href="#Using-NiceNumbers-to-build-the-exercise">Using NiceNumbers to build the exercise</a><a id="Using-NiceNumbers-to-build-the-exercise-1"></a><a class="docs-heading-anchor-permalink" href="#Using-NiceNumbers-to-build-the-exercise" title="Permalink"></a></h2><p>To construct a workable exercise we start from the decomposition and construct <span>$A$</span>. First we need to load the relevant packages:</p><pre><code class="language-julia-repl">julia&gt; using NiceNumbers, LinearAlgebra</code></pre><p>Decide on an orthogonal basis in <span>$\mathbb{R}^m$</span> (here <span>$m=3$</span>)</p><pre><code class="language-julia-repl">julia&gt; u1 = NiceNumber[3,12,4]
+3-element Vector{NiceNumber}:
+  3
+ 12
+  4
+
+julia&gt; u2 = NiceNumber[-4,0,3]
+3-element Vector{NiceNumber}:
+ -4
+  0
+  3
+
+julia&gt; u3 = cross(u1,u2)
+3-element Vector{NiceNumber}:
+  36
+ -25
+  48</code></pre><p>and take note of their norms</p><pre><code class="language-julia-repl">julia&gt; n1 = norm(u1)
+Nice number:
+   13
+
+julia&gt; n2 = norm(u2)
+Nice number:
+   5
+
+julia&gt; n3 = norm(u3)
+Nice number:
+   65
+
+julia&gt; n3 == n1*n2
+true</code></pre><p>to construct <span>$U$</span>:</p><pre><code class="language-julia-repl">julia&gt; U = 1/n3 * [u1*n2 u2*n1 u3]
+3×3 Matrix{NiceNumber}:
+  3//13  -4//5  36//65
+ 12//13      0  -5//13
+  4//13   3//5  48//65</code></pre><p>The same procedure can in principle be used to construct a second unitary matrix in <span>$\mathbb{R}^{n\times n}$</span> (here <span>$n=2$</span>):</p><pre><code class="language-julia-repl">julia&gt; V = 1//5* NiceNumber[-3 4;4 3]
+2×2 Matrix{NiceNumber}:
+ -3//5  4//5
+  4//5  3//5</code></pre><p>Now we fix the singular values and construct some auxiliary matrices:</p><pre><code class="language-julia-repl">julia&gt; Σ = diagm(NiceNumber[13,5])
+2×2 Matrix{NiceNumber}:
+ 13  0
+  0  5
+
+julia&gt; S = [Σ;0 0]
+3×2 Matrix{NiceNumber}:
+ 13  0
+  0  5
+  0  0
+
+julia&gt; R = pinv(S)
+2×3 Matrix{NiceNumber}:
+ 1//13     0  0
+     0  1//5  0</code></pre><p>And we&#39;re ready to construct our matrix <span>$A$</span> and it&#39;s pseudoinverse <span>$A^\dagger$</span>:</p><pre><code class="language-julia-repl">julia&gt; A = U*S*V&#39;
+3×2 Matrix{NiceNumber}:
+     -5      0
+ -36//5  48//5
+      0      5
+
+julia&gt; A⁺ = V*R*U&#39;
+2×3 Matrix{NiceNumber}:
+ -2929//21125  -36//845  1728//21125
+ -1728//21125   48//845  1921//21125
+
+julia&gt; float(A⁺) ≈ pinv(float(A))
+true</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../functions/">« Index</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 10 September 2021 08:55">Friday 10 September 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
