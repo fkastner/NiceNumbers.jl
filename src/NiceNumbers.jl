@@ -1,6 +1,7 @@
 module NiceNumbers
 
 import Primes: factor, prodfactors
+import Base: showerror
 import Base: +, -, *, inv, /, sqrt, ^
 import Base: //
 import Base: isless, <, <=, ==, hash
@@ -59,6 +60,11 @@ function reduce_root(coeff::Union{Integer,Rational}, radicand::Integer)
     return coeff, radicand
 end
 
+struct NotNiceError <: Exception
+    expr::String
+end
+showerror(io::IO, e::NotNiceError) = print(io, e.expr, " is not nice anymore!")
+
 # always promote to NiceNumber; if that can't be done, it can't be nice
 promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Number} = NiceNumber
 one(::NiceNumber) = NiceNumber(1, 0, 0)
@@ -103,11 +109,12 @@ Base.show(io::IO, ::MIME"text/plain", n::NiceNumber) = print(io, "Nice number:\n
 -(n::NiceNumber) = NiceNumber(-n.a, -n.coeff, n.radicand)
 function +(n::NiceNumber, m::NiceNumber)
     if !(n.radicand == m.radicand || isrational(n) || isrational(m))
-        error("That's not nice anymore!")
+        throw(NotNiceError("$n + $m"))
     end
-    if m.radicand == 0
+    if isrational(m)
         return NiceNumber(n.a + m.a, n.coeff, n.radicand)
     else
+        # either n is rational (n.coeff==0) or the radicands match
         return NiceNumber(n.a + m.a, n.coeff + m.coeff, m.radicand)
     end
 end
@@ -129,7 +136,7 @@ end
 inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff^2 * n.radicand)
 /(n::NiceNumber, m::NiceNumber) = n * inv(m)
 
-sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : error("That's not nice anymore!")
+sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : throw(NotNiceError("sqrt($n)"))
 """
     nthroot(m::NiceNumber, n)
 
@@ -137,14 +144,14 @@ Returns the nth root of `m`. Works by repeatedly determining the square root and
 powers of two.
 """
 function nthroot(m::NiceNumber, n)
-    !ispow2(n) && error("That's not nice anymore!")
+    !ispow2(n) && throw(NotNiceError("nthroot($m,$n)"))
     while n > 1
         m = sqrt(m)
         n = n >> 1
     end
     return m
 end
-^(x::Number, n::NiceNumber) = isrational(n) ? NiceNumber(x)^n.a : x^float(n)
+^(x::Number, n::NiceNumber) = isrational(n) ? NiceNumber(x)^n.a : throw(NotNiceError("$x^$n"))
 ^(n::NiceNumber, r::Rational) = nthroot(n^numerator(r), denominator(r))
 
 # TODO: think about comparisons more (or less)
