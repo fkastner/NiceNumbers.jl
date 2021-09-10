@@ -1,5 +1,6 @@
-import LinearAlgebra: Hermitian, Symmetric, UpperTriangular, LowerTriangular
-import LinearAlgebra: cholesky!, _chol!, Cholesky, checkpositivedefinite
+using LinearAlgebra: Hermitian, Symmetric, UpperTriangular, LowerTriangular
+using LinearAlgebra: _chol!, Cholesky, checkpositivedefinite
+import LinearAlgebra: cholesky!
 
 
 function cholesky!(A::Union{Hermitian{NiceNumber,S}, Symmetric{NiceNumber,S}} where S, ::Val{false}=Val(false); check::Bool = true)
