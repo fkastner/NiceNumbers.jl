@@ -43,7 +43,7 @@ Nice number:
    1//5⋅√15
 
 julia> sqrt(n)
-ERROR: That's not nice anymore!
+ERROR: sqrt(2+3⋅√5) is not nice anymore!
 [...]
 ```
 
