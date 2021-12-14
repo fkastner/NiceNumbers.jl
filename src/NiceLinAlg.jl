@@ -2,7 +2,7 @@ using LinearAlgebra: Hermitian, Symmetric, UpperTriangular, LowerTriangular
 using LinearAlgebra: _chol!, Cholesky, checkpositivedefinite
 import LinearAlgebra: cholesky!
 
-@static if VERSION < v"1.8.0-DEV.1120"
+@static if VERSION < v"1.8.0-DEV.1139"
     function cholesky!(A::Union{Hermitian{NiceNumber}, Symmetric{NiceNumber}}, ::Val{false}=Val(false); check::Bool = true)
         C, info = _chol!(A.data, A.uplo == 'U' ? UpperTriangular : LowerTriangular)
         check && checkpositivedefinite(info)
