@@ -1,6 +1,13 @@
 using NiceNumbers
 using Test, LinearAlgebra
 
+@static if VERSION < v"1.7"
+    nopivot = Val(false)
+    pivot   = Val(true)
+else
+    nopivot = NoPivot()
+    pivot   = RowMaximum()
+end
 
 @testset "NiceNumbers" begin
     @testset "Constructors" begin
@@ -136,12 +143,12 @@ using Test, LinearAlgebra
         @testset "LU" begin
             @nice L = [1 0 0;im 1 0; 1/2 -3im 1]
             @nice U = [1 1 1;0 1 1; 0 0 1]
-            LUL, LUU = lu(L*U, Val(false))
+            LUL, LUU = lu(L*U, nopivot)
             @test LUL == L
             @test LUU == U
 
             @nice A = [2 2 0;2 2 1; 2 3 5]
-            L, U, p = lu(A, Val(true))
+            L, U, p = lu(A, pivot)
             @test L == @nice [1 0 0;1 1 0;1 0 1]
             @test U == @nice [2 2 0;0 1 5;0 0 1]
             @test p == [1,3,2]
