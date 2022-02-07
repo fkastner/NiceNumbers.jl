@@ -1,4 +1,5 @@
 using NiceNumbers
+using NiceNumbers: NotNiceError
 using Test, LinearAlgebra
 
 @static if VERSION < v"1.7"
@@ -29,13 +30,13 @@ end
 
     @testset "Basic Arithmetic" begin
         @test n + m === NiceNumber(7)
-        @test_broken n + k
+        @test_throws NotNiceError n + k
         @test n - m === NiceNumber(-3, 6, 5)
-        @test_broken n - k
+        @test_throws NotNiceError n - k
         @test n * m === NiceNumber(-35, 9, 5)
-        @test_broken n * k
+        @test_throws NotNiceError n * k
         @test n / m === NiceNumber(-11 // 4, -21 // 20, 5)
-        @test_broken n / k
+        @test_throws NotNiceError n / k
         @test c * c === NiceNumber(-5)
     end
 
