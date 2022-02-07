@@ -65,6 +65,7 @@ struct NotNiceError <: Exception
 end
 showerror(io::IO, e::NotNiceError) = print(io, e.expr, " is not nice anymore!")
 
+## Properties of NiceNumber's
 """
     isrational(n::NiceNumber)
 
@@ -78,6 +79,7 @@ real(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a)
 imag(n::NiceNumber) = isreal(n) ? zero(n) : NiceNumber(0,n.coeff,-n.radicand)
 checkreal(n::NiceNumber) = isreal(n) || throw(DomainError(n, "Need a real number for this."))
 
+## Pretty printing
 function Base.show(io::IO, n::NiceNumber)
     pretty(r::Rational) = isinteger(r) ? numerator(r) : r
 
@@ -106,6 +108,13 @@ zero(::NiceNumber) = NiceNumber(0, 0, 0)
 AbstractFloat(n::NiceNumber) = checkreal(n) && float(n.a) + float(n.coeff) * √n.radicand
 (::Type{T})(n::NiceNumber) where {T<:AbstractFloat} =
     checkreal(n) && convert(T, n.a) + convert(T, n.coeff) * convert(T, √n.radicand)
+
+function (::Type{Complex{T}})(n::NiceNumber) where {T<:Real}
+    isrational(n) && return complex(T(n.a))
+    isreal(n) && return complex(T(n.a+n.coeff*√n.radicand))
+    n.radicand === -1 && return complex(T(n.a), T(n.coeff))
+    return complex(T(n.a), T(n.coeff*√-n.radicand))
+end
 
 ## Arithmetic
 # +(n::NiceNumber) = n # already in Base for <:Number
@@ -138,6 +147,7 @@ end
 
 inv(n::NiceNumber) = NiceNumber(n.a, -n.coeff, n.radicand) * inv(n.a^2 - n.coeff^2 * n.radicand)
 /(n::NiceNumber, m::NiceNumber) = n * inv(m)
+//(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} = n / m
 
 sqrt(n::NiceNumber) = isrational(n) ? NiceNumber(0, 1, n.a) : throw(NotNiceError("sqrt($n)"))
 """
@@ -157,8 +167,9 @@ end
 ^(x::Number, n::NiceNumber) = isrational(n) ? NiceNumber(x)^n.a : throw(NotNiceError("$x^$n"))
 ^(n::NiceNumber, r::Rational) = nthroot(n^numerator(r), denominator(r))
 
+## Comparisons
 # TODO: think about comparisons more (or less)
-isless(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
+isless(n::NiceNumber, m::NiceNumber) = float(n) < float(m) # works only for real n and m
 isless(n::Real, m::NiceNumber) = n < float(m)
 isless(n::NiceNumber, m::Real) = float(n) < m
 # <(n::NiceNumber, m::NiceNumber) = float(n) < float(m) # falls back to isless
@@ -167,9 +178,7 @@ isless(n::NiceNumber, m::Real) = float(n) < m
 ==(m::AbstractFloat, n::NiceNumber) = n == m
 hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:NiceNumber, h))))
 
-//(n::S, m::T) where {S<:Union{NiceNumber,Integer,Rational},T<:Union{NiceNumber,Integer,Rational}} =
-    n / m
-
+## Linear Algebra
 conj(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a, -n.coeff, n.radicand)
 abs(n::NiceNumber) = isreal(n) ? float(n)>0 ? n : -n : sqrt(n*conj(n))
 abs2(n::NiceNumber) = n*conj(n)
