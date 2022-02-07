@@ -69,6 +69,7 @@ end
         @test NiceNumber(5, 1, 2) > 5
         @test NiceNumber(13, 3, 7) == 13 + 3 * √7
         @test 13 + 3 * √7 == NiceNumber(13, 3, 7)
+        @test !(NiceNumber(7) < 7) # issue #7
     end
 
     @testset "Conversion" begin

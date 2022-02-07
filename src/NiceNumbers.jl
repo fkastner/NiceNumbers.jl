@@ -65,15 +65,6 @@ struct NotNiceError <: Exception
 end
 showerror(io::IO, e::NotNiceError) = print(io, e.expr, " is not nice anymore!")
 
-# always promote to NiceNumber; if that can't be done, it can't be nice
-promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Number} = NiceNumber
-one(::NiceNumber) = NiceNumber(1, 0, 0)
-zero(::NiceNumber) = NiceNumber(0, 0, 0)
-
-AbstractFloat(n::NiceNumber) = float(n.a) + float(n.coeff) * √n.radicand
-(::Type{T})(n::NiceNumber) where {T<:AbstractFloat} =
-    convert(T, n.a) + convert(T, n.coeff) * convert(T, √n.radicand)
-
 """
     isrational(n::NiceNumber)
 
@@ -85,6 +76,7 @@ isfinite(n::NiceNumber) = isfinite(n.a) && isfinite(n.coeff)
 isreal(n::NiceNumber) = n.radicand >= 0
 real(n::NiceNumber) = isreal(n) ? n : NiceNumber(n.a)
 imag(n::NiceNumber) = isreal(n) ? zero(n) : NiceNumber(0,n.coeff,-n.radicand)
+checkreal(n::NiceNumber) = isreal(n) || throw(DomainError(n, "Need a real number for this."))
 
 function Base.show(io::IO, n::NiceNumber)
     pretty(r::Rational) = isinteger(r) ? numerator(r) : r
@@ -105,7 +97,18 @@ function Base.show(io::IO, n::NiceNumber)
 end
 Base.show(io::IO, ::MIME"text/plain", n::NiceNumber) = print(io, "Nice number:\n   ", n)
 
-+(n::NiceNumber) = n
+## Promotion & Conversion
+# always promote to NiceNumber; if that can't be done, it can't be nice
+promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Number} = NiceNumber
+one(::NiceNumber) = NiceNumber(1, 0, 0)
+zero(::NiceNumber) = NiceNumber(0, 0, 0)
+
+AbstractFloat(n::NiceNumber) = checkreal(n) && float(n.a) + float(n.coeff) * √n.radicand
+(::Type{T})(n::NiceNumber) where {T<:AbstractFloat} =
+    checkreal(n) && convert(T, n.a) + convert(T, n.coeff) * convert(T, √n.radicand)
+
+## Arithmetic
+# +(n::NiceNumber) = n # already in Base for <:Number
 -(n::NiceNumber) = NiceNumber(-n.a, -n.coeff, n.radicand)
 function +(n::NiceNumber, m::NiceNumber)
     if !(n.radicand == m.radicand || isrational(n) || isrational(m))
@@ -157,9 +160,9 @@ end
 # TODO: think about comparisons more (or less)
 isless(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
 isless(n::Real, m::NiceNumber) = n < float(m)
-isless(n::NiceNumber, m::Real) = !isless(m,n)
-<(n::NiceNumber, m::NiceNumber) = float(n) < float(m)
-<=(n::NiceNumber, m::NiceNumber) = n === m || n < m
+isless(n::NiceNumber, m::Real) = float(n) < m
+# <(n::NiceNumber, m::NiceNumber) = float(n) < float(m) # falls back to isless
+# <=(n::NiceNumber, m::NiceNumber) = n === m || n < m # fallback already in Base
 ==(n::NiceNumber, m::AbstractFloat) = float(n) == m
 ==(m::AbstractFloat, n::NiceNumber) = n == m
 hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:NiceNumber, h))))
