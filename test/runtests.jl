@@ -159,7 +159,7 @@ end
         @testset "QR" begin
             @nice A = [4 2;0 3//5;0 -4//5;0 0]
             Q, R = qr(A)
-            @test Q == @nice [-1 0 0 0;0 -3/5 4/5 0;0 4/5 3/5 0;0 0 0 1]
+            @test Q * I == @nice [-1 0 0 0;0 -3/5 4/5 0;0 4/5 3/5 0;0 0 0 1]
             @test R == @nice [-4 -2;0 -1]
         end
     end
