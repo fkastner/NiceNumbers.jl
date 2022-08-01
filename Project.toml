@@ -1,7 +1,7 @@
 name = "NiceNumbers"
 uuid = "fd372b59-0929-42ec-9982-92b7b2350263"
 authors = ["Felix Kastner <kastner.felix@gmail.com>"]
-version = "0.2.4"
+version = "0.2.5"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
