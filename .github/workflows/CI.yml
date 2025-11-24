@@ -23,7 +23,7 @@ jobs:
     continue-on-error: ${{ matrix.version == 'nightly' }}
     steps:
       - name: Git checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
         with:
