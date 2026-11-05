@@ -105,8 +105,8 @@ promote_rule(::Type{NiceNumber}, ::Type{T}) where {T<:Number} = NiceNumber
 one(::NiceNumber) = NiceNumber(1, 0, 0)
 zero(::NiceNumber) = NiceNumber(0, 0, 0)
 
-AbstractFloat(n::NiceNumber) = checkreal(n) && float(n.a) + float(n.coeff) * √n.radicand
-(::Type{T})(n::NiceNumber) where {T<:AbstractFloat} =
+Base.AbstractFloat(n::NiceNumber) = checkreal(n) && float(n.a) + float(n.coeff) * √n.radicand
+(::Type{T})(n::NiceNumber) where {T<:Base.AbstractFloat} =
     checkreal(n) && convert(T, n.a) + convert(T, n.coeff) * convert(T, √n.radicand)
 
 function (::Type{Complex{T}})(n::NiceNumber) where {T<:Real}
