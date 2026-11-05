@@ -38,7 +38,7 @@ NiceNumber(x::T) where {T<:Union{Integer,Rational}} = NiceNumber(x, 0, 0)
 NiceNumber(a, coeff, radicand::Rational) =
     NiceNumber(a, coeff // denominator(radicand), numerator(radicand) * denominator(radicand))
 NiceNumber(a, coeff, radicand) = NiceNumber(a)+NiceNumber(coeff)*sqrt(NiceNumber(radicand))
-NiceNumber(x::AbstractFloat) = NiceNumber(rationalize(Int, x), 0, 0)
+NiceNumber(x::Base.AbstractFloat) = NiceNumber(rationalize(Int, x), 0, 0)
 NiceNumber(z::Complex{T}) where T<:Real = NiceNumber(z.re) + NiceNumber(0,z.im,-1)
 NiceNumber(n::NiceNumber) = n
 
@@ -174,8 +174,8 @@ isless(n::Real, m::NiceNumber) = n < float(m)
 isless(n::NiceNumber, m::Real) = float(n) < m
 # <(n::NiceNumber, m::NiceNumber) = float(n) < float(m) # falls back to isless
 # <=(n::NiceNumber, m::NiceNumber) = n === m || n < m # fallback already in Base
-==(n::NiceNumber, m::AbstractFloat) = float(n) == m
-==(m::AbstractFloat, n::NiceNumber) = n == m
+==(n::NiceNumber, m::Base.AbstractFloat) = float(n) == m
+==(m::Base.AbstractFloat, n::NiceNumber) = n == m
 hash(n::NiceNumber, h::UInt) = hash(n.a, hash(n.coeff, hash(n.radicand, hash(:NiceNumber, h))))
 
 ## Linear Algebra

@@ -3,7 +3,7 @@ using Documenter, NiceNumbers
 makedocs(;
     modules = [NiceNumbers],
     authors = "Felix Kastner <kastner.felix@gmail.com>",
-    repo = "https://github.com/fkastner/NiceNumbers.jl/blob/{commit}{path}#L{line}",
+    repo = Remotes.GitHub("fkastner", "NiceNumbers.jl"),
     sitename = "NiceNumbers.jl",
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", "false") == "true",
@@ -14,8 +14,7 @@ makedocs(;
         "Home" => "index.md",
         "Index" => "functions.md",
         "Example: SVD" => "example_svd.md"
-    ],
-    strict = true
+    ]
 )
 
 deploydocs(;
